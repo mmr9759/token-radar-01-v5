@@ -3,13 +3,124 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Radar: pre-token protocols ranked by implied value</title>
+<title>Token Radar — pre-token protocols, ranked by implied value</title>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
-<a class="skip" href="#board">Skip to the board</a>
-<main id="board" tabindex="-1" aria-busy="true"></main>
-<script src="../data.js"></script>
+<header class="top">
+  <div class="top-inner">
+    <div>
+      <h1>Token Radar</h1>
+      <p class="tagline">Pre-token protocols, ranked by what their token would be worth.</p>
+    </div>
+    <div class="asof" id="asof">Snapshot —</div>
+  </div>
+</header>
+
+<main>
+  <section class="stats" id="stats" aria-label="Board summary"></section>
+
+  <section class="controls" aria-label="Filter and sort">
+    <label class="ctl">Search
+      <input id="q" type="search" placeholder="Name or slug…" autocomplete="off">
+    </label>
+    <label class="ctl">Category
+      <select id="cat"><option value="">All categories</option></select>
+    </label>
+    <label class="ctl">Readiness
+      <select id="band">
+        <option value="">All bands</option>
+        <option value="Hot">Hot</option>
+        <option value="Warming">Warming</option>
+        <option value="Early">Early</option>
+      </select>
+    </label>
+    <label class="ctl">Source
+      <select id="src">
+        <option value="">Watchlist + early</option>
+        <option value="watchlist">Watchlist only</option>
+        <option value="early">Early only</option>
+      </select>
+    </label>
+    <label class="ctl">Sort by
+      <select id="sort">
+        <option value="rank">Rank (implied value)</option>
+        <option value="tvl">TVL</option>
+        <option value="ready">Readiness</option>
+        <option value="growth">7-day growth</option>
+      </select>
+    </label>
+    <button id="reset" type="button">Reset</button>
+  </section>
+
+  <section id="detail" class="detail" hidden aria-label="Protocol detail"></section>
+
+  <section aria-label="Ranked board">
+    <div class="board-head">
+      <h2>Ranked board</h2>
+      <p id="count" class="count"></p>
+    </div>
+    <div class="table-wrap">
+      <table id="board">
+        <thead>
+          <tr>
+            <th class="num">Rank</th>
+            <th>Protocol</th>
+            <th>Category</th>
+            <th class="num">TVL</th>
+            <th class="num">Implied value</th>
+            <th class="num">Multiple</th>
+            <th class="num">7-day</th>
+            <th class="num">Readiness</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="note" id="board-note"></p>
+  </section>
+
+  <section aria-label="Already live">
+    <div class="board-head">
+      <h2>Already live — tokens trading</h2>
+      <p class="count">The 24 tokenised protocols with the most TVL. Their market caps are the comparables the multiples come from; they are not ranked here, they are the yardstick.</p>
+    </div>
+    <div class="table-wrap">
+      <table id="live">
+        <thead>
+          <tr>
+            <th>Protocol</th>
+            <th>Category</th>
+            <th class="num">TVL</th>
+            <th class="num">Market cap</th>
+            <th class="num">mcap / TVL</th>
+          </tr>
+        </thead>
+        <tbody id="live-rows"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="method" aria-label="How the radar works">
+    <h2>How the radar works</h2>
+    <p>Every number on this page is derived from the snapshot — no protocol is ranked by name.</p>
+    <ol>
+      <li><strong>Implied value = TVL × category multiple × growth × maturity.</strong> The multiple is the median market-cap-per-TVL of the tokenised protocols in the same category, shrunk toward the global median (six points of weight) so a thin category cannot set the price alone; a category with fewer than three sane comparables uses the global median outright. A comparable only counts when its multiple sits between 0.005 and 5.</li>
+      <li><strong>Growth</strong> is the protocol's 7-day TVL change, dampened by half and clamped to −30%…+60%, so a hot week lifts the value and a cold week trims it.</li>
+      <li><strong>Maturity</strong> is how long the protocol has run: 0.90 for a protocol listed this month, rising to 1.00 after two years without a token.</li>
+      <li><strong>Readiness</strong> is a 0–100 score from the same two signals: up to 60 points for age and up to 40 for the 7-day change. Hot is 60 or more, Warming 35–59, Early below 35.</li>
+      <li><strong>The board</strong> ranks the 40 watchlist protocols (TVL at or above $50M, no token recorded) plus the 160 pre-token protocols below the floor with the most TVL. Bridges and centralised exchanges are left out of the early board: they move other tokens, they do not launch one.</li>
+      <li><strong>“Records no token”</strong> is what the snapshot says — a protocol on this board may still have a token its DefiLlama record does not carry. The implied value is the radar's own claim, never a promise that a token is coming.</li>
+    </ol>
+  </section>
+</main>
+
+<footer>
+  <p>Token Radar — built from the sealed DefiLlama snapshot. Implied values are the entry's own estimates.</p>
+</footer>
+
+<script src="data.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
